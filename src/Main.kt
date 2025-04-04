@@ -13,88 +13,42 @@ fun main() {
 
     println("Is valid board? ${is_Valid(board)}")
 }
-// do it like a <T
-fun is_Valid(board: List<List<String>>): Boolean {
-    for (i in 0 until 9) {
-        val rowSet = mutableSetOf<String>()
-        val columnSet = mutableSetOf<String>()
-        val boxSet = mutableSetOf<String>()
+fun <T> is_Valid(board: List<List<T>>): Boolean {
+    val size = board.size
+    val boxSize = kotlin.math.sqrt(size.toDouble()).toInt()
 
-        for (j in 0 until 9) {
+    for (i in 0 until size) {
+        val rowSet = mutableSetOf<T>()
+        val columnSet = mutableSetOf<T>()
+        val boxSet = mutableSetOf<T>()
+
+        for (j in 0 until size) {
             val rowValue = board[i][j]
-            if (rowValue != "-" && rowValue in rowSet)
-                return false
+
+            if (rowValue != "-" && rowValue in rowSet) return false
             if (rowValue != "-") rowSet.add(rowValue)
 
             val columnValue = board[j][i]
-            if (columnValue != "-" && columnValue in columnSet)
-                return false
+            if (columnValue != "-" && columnValue in columnSet) return false
             if (columnValue != "-") columnSet.add(columnValue)
 
-            val boxRow = 3 * (i / 3) + j / 3
-            val boxCol = 3 * (i % 3) + j % 3
+            val boxRow = boxSize * (i / boxSize) + j / boxSize
+            val boxCol = boxSize * (i % boxSize) + j % boxSize
             val boxValue = board[boxRow][boxCol]
-            if (boxValue != "-" && boxValue in boxSet)
-                return false
+            if (boxValue != "-" && boxValue in boxSet) return false
             if (boxValue != "-") boxSet.add(boxValue)
 
-            if (rowValue != "-" && (rowValue.toIntOrNull() == null || rowValue.toInt() < 1 || rowValue.toInt() > 9))
-                return false
+            if (rowValue != "-" && rowValue is String) {
+                val num = rowValue.toIntOrNull()
+
+                if (num == null || num < 1 || num > 16) return false
+            }
+
+            if (rowValue != "-" && rowValue is String) {
+                if (rowValue.length > 1 || !rowValue.matches("[0-9A-F]+".toRegex())) return false
+            }
         }
     }
+
     return true
 }
-
-
-/*
-
- تكرار على كل عناصر الصف أو العمود
-for (j in 0 until 9) {
-     احصل على قيمة الخلية الحالية في الصف
-    val rowValue = board[i][j]
-
-     تحقق إذا كانت القيمة ليست فارغة ومتكررة في الصف
-    if (rowValue != "-" && rowValue in rowSet) {
-         إذا كانت متكررة، أرجع خطأ
-        return false
-    }
-
-     إذا كانت القيمة ليست فارغة، أضفها إلى مجموعة الصف
-    if (rowValue != "-") rowSet.add(rowValue)
-
-    // احصل على قيمة الخلية الحالية في العمود
-    val columnValue = board[j][i]
-
-     تحقق إذا كانت القيمة ليست فارغة ومتكررة في العمود
-    if (columnValue != "-" && columnValue in columnSet) {
-        // إذا كانت متكررة، أرجع خطأ
-        return false
-    }
-
-     إذا كانت القيمة ليست فارغة، أضفها إلى مجموعة العمود
-    if (columnValue != "-") columnSet.add(columnValue)
-
-     احسب موقع المربع الذي يحتوي على الخلية الحالية
-    val boxRow = 3 * (i / 3) + j / 3
-    val boxCol = 3 * (i % 3) + j % 3
-
-     احصل على قيمة الخلية في المربع
-    val boxValue = board[boxRow][boxCol]
-
-     تحقق إذا كانت القيمة ليست فارغة ومتكررة في المربع
-    if (boxValue != "-" && boxValue in boxSet) {
-         إذا كانت متكررة، أرجع خطأ
-        return false
-    }
-
-     إذا كانت القيمة ليست فارغة، أضفها إلى مجموعة المربع
-    if (boxValue != "-") boxSet.add(boxValue)
-
-    تحقق من صحة القيمة الرقمية
-    if (rowValue != "-" && (rowValue.toIntOrNull() == null || rowValue.toInt()  9)) {
-         إذا كانت القيمة غير صحيحة، أرجع خطأ
-        return false
-    }
-}
-
- */
